@@ -1,30 +1,40 @@
 # Jockey
 
-Jockey is a simple macOS menu bar app that helps keep your SMB shares mounted and connected, preventing the common issue of shares getting disconnected.
+Jockey is a macOS menu bar utility that helps keep your SMB network shares mounted and connected, preventing the common issue of disconnections that can disrupt your workflow.
+
+Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co.nz/automounter/).
 
 ## Features
 
-- **Menu Bar Integration**: Runs silently in the menu bar with minimal resource usage
-- **Connection Status**: Shows a green indicator for active connections with uptime
-- **Auto-reconnect**: Automatically attempts to reconnect to configured shares when they disconnect
-- **System Integration**: Can import your existing system SMB mounts
-- **Custom Mounting**: Configure custom SMB shares with specific mount points
+- **Menu Bar Integration**: Runs efficiently in the menu bar with minimal resource usage
+- **Connection Status**: Shows connection status and uptime for all configured shares
+- **Auto-reconnect**: Automatically attempts to reconnect shares when they disconnect
+- **Configurable Polling**: Set how frequently Jockey checks connection status
+- **Custom Mount Points**: Configure shares with specific mount points
+- **System Integration**: Detects existing system SMB mounts
 
 ## How It Works
 
-Jockey regularly checks the connection status of your configured SMB shares and attempts to reconnect them if they disconnect. It uses native macOS APIs to interact with the file system and maintains a persistent list of your shares.
+Jockey regularly checks the connection status of your configured SMB shares at your specified polling interval and attempts to reconnect them if they become disconnected. It uses native macOS APIs to interact with the file system and maintains a persistent list of your shares.
 
 ## Requirements
 
-- macOS 11.0 or later
+- macOS 14.0 or later (14 Sonoma, 15 Sequoia)
 - Access to SMB shares on your network
 
-## Setup
+## Usage
 
-1. Launch the app, and it will appear in your menu bar
-2. Click the menu bar icon and select "Settings"
-3. Add SMB shares either from your system mounts or manually
-4. Jockey will keep an eye on your connections and ensure they stay mounted
+1. Launch Jockey, and it will appear in your menu bar
+2. Click the menu bar icon to see the status of your shares
+3. Open Settings to add or manage SMB shares
+4. Adjust the polling interval to control how often Jockey checks your connections
+
+## Technical Details
+
+- Written in SwiftUI for modern macOS integration
+- Locally stores share configuration in user preferences
+- Efficient polling system to minimize resource usage
+- Compatible with custom SMB authentication
 
 ## Permissions
 

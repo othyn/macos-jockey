@@ -35,44 +35,13 @@ struct jockeyApp: App {
             } else {
                 ForEach(shareManager.shares) { share in
                     if share.isConnected {
-                        Button(action: {}) {
-                            HStack {
-                                Circle()
-                                    .fill(Color.green)
-                                    .frame(width: 8, height: 8)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(share.name)
-
-                                    HStack(spacing: 4) {
-                                        Text(share.url.absoluteString)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-
-                                        Text(share.formattedConnectionTime.isEmpty ? "" : "(\(share.formattedConnectionTime))")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                        }
-                        .disabled(true)
+                        Text("\(share.name) • \(share.url.absoluteString ?? "") • \(share.mountPoint?.path ?? "/Volumes/\(share.name)")")
+                            .foregroundColor(.primary)
                     } else {
                         Button {
                             shareManager.mountShare(share)
                         } label: {
-                            HStack {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 8, height: 8)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(share.name)
-                                    Text(share.url.absoluteString)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
+                            Text("\(share.name) • \(share.url.host ?? "")")
                         }
                     }
                 }

@@ -16,17 +16,12 @@ struct SettingsView: View {
     @State private var hoveredAddButton: String? = nil
     @State private var pollingInterval: Double = 60
     @State private var defaultMountPath: String = "/Volumes"
-    @State private var timeUpdater = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var body: some View {
         TabView {
             managedSharesView
                 .tabItem {
                     Label("Managed Shares", systemImage: "externaldrive.connected.to.line.below.fill")
-                }
-                .onReceive(timeUpdater) { _ in
-                    // This empty action forces the view to refresh, updating the time display
-                    shareManager.objectWillChange.send()
                 }
 
             systemSharesView
@@ -45,12 +40,6 @@ struct SettingsView: View {
             pollingInterval = shareManager.pollingInterval
             // Load saved mount path or use default
             defaultMountPath = UserDefaults.standard.string(forKey: "defaultMountPath") ?? "/Volumes"
-            // Start the timer when the view appears
-            timeUpdater = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        }
-        .onDisappear {
-            // Cancel the timer when the view disappears
-            timeUpdater.upstream.connect().cancel()
         }
     }
 

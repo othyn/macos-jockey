@@ -80,19 +80,22 @@ struct jockeyApp: App {
 
             Divider()
 
-            Button("Check Status") {
+            Button("Refresh") {
                 shareManager.checkConnectionStatus()
             }
+            .keyboardShortcut("r")
 
             SettingsLink {
-                Text("Settings")
+                Text("Settings...")
             }
+            .keyboardShortcut(",")
 
             Divider()
 
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
+            .keyboardShortcut("q")
         }
         .menuBarExtraStyle(.menu)
 

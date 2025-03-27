@@ -1,6 +1,6 @@
 # Jockey
 
-Jockey is a macOS menu bar utility that helps keep your SMB network shares mounted and connected, preventing the common issue of disconnections that can disrupt your workflow.
+Jockey is a macOS menu bar utility that helps keep your SMB network shares mounted and connected, preventing the common issue of disconnections that can disrupt your workflow, or that aggravating 'Unavailable' on Plex when you've just got into bed.
 
 Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co.nz/automounter/).
 

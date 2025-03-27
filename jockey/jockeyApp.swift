@@ -16,6 +16,7 @@ struct jockeyApp: App {
         Logger.shared.setLoggingEnabled(true)
 
         logInfo("Jockey app starting...")
+        logInfo("Attempting to reconnect all configured shares during startup...")
     }
 
     var body: some Scene {

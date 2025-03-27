@@ -81,6 +81,7 @@ class SMBShareManager: ObservableObject {
             self?.keepSharesMounted()
         }
         checkConnectionStatus()
+        keepSharesMounted() // Try to connect all shares on startup
     }
 
     func stopMonitoring() {
@@ -208,6 +209,11 @@ class SMBShareManager: ObservableObject {
     }
 
     func keepSharesMounted() {
+        let disconnectedShares = shares.filter { !$0.isConnected }
+        if !disconnectedShares.isEmpty {
+            logInfo("Attempting to reconnect \(disconnectedShares.count) disconnected shares...")
+        }
+
         for share in shares where !share.isConnected {
             mountShare(share)
         }

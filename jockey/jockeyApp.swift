@@ -35,8 +35,10 @@ struct jockeyApp: App {
             } else {
                 ForEach(shareManager.shares) { share in
                     if share.isConnected {
-                        Text("\(share.name) • \(share.url.absoluteString ?? "") • \(share.mountPoint?.path ?? "/Volumes/\(share.name)")")
-                            .foregroundColor(.primary)
+                        HStack {
+                            Text("\(share.name) • Connected for \(share.formattedConnectionTime)")
+                            Text("\(share.url.absoluteString) • \(share.mountPoint?.path ?? "/Volumes/\(share.name)")")
+                        }
                     } else {
                         Button {
                             shareManager.mountShare(share)
@@ -44,18 +46,20 @@ struct jockeyApp: App {
                             Text("\(share.name) • \(share.url.host ?? "")")
                         }
                     }
+
+                    Divider()
                 }
             }
 
             Divider()
 
-            Button("Refresh") {
+            Button("Refresh connections") {
                 shareManager.checkConnectionStatus()
             }
             .keyboardShortcut("r")
 
             SettingsLink {
-                Text("Settings...")
+                Text("Configure...")
             }
             .keyboardShortcut(",")
 

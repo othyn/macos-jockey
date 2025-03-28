@@ -5,7 +5,7 @@ struct LogsView: View {
 
     private var sortedLogs: [SMBShareManager.ReconnectionLog] {
         // Return sorted by timestamp (newest first)
-        return shareManager.reconnectionLogs.sorted { $0.timestamp > $1.timestamp }
+        shareManager.reconnectionLogs.sorted { $0.timestamp > $1.timestamp }
     }
 
     var body: some View {

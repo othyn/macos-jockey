@@ -51,11 +51,10 @@
 # :notebook_with_decorative_cover: Table of Contents
 
 - [About the Project](#star2-about-the-project)
-  - [Screenshots](#camera-screenshots)
+  - [Screenshot](#camera-screenshot)
   - [Tech Stack](#space_invader-tech-stack)
   - [Features](#dart-features)
 - [Download](#floppy_disk-download)
-  - [Preferences Storage](#gear-preferences-storage)
 - [Contributing](#memo-contributing)
 - [Changelog](https://github.com/othyn/macos-jockey/releases)
 - [License](#warning-license)

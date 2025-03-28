@@ -71,7 +71,7 @@ Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co
 
 <!-- Screenshots -->
 
-### :camera: Screenshots
+### :camera: Screenshot
 
 <div align="center">
     <img alt="screenshot" src="art/screenshot.png" width="70%" />

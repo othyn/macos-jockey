@@ -107,7 +107,7 @@ Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co
 
 ## :floppy_disk: Download
 
-**Download for macOS Sequoia (15) and higher:** [v1.0.0](https://github.com/othyn/macos-jockey/releases/download/v1.0.0/Jockey.zip)
+**Download for macOS Sequoia (15) and higher:** [v1.0.1](https://github.com/othyn/macos-jockey/releases/download/v1.0.1/Jockey.zip)
 
 ### Using the app for the first time
 

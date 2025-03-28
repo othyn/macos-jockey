@@ -364,7 +364,22 @@ struct SettingsView: View {
 
         do {
             try process.run()
+
+            // Add a timeout to prevent hanging
+            let timeout = DispatchWorkItem {
+                process.terminate()
+            }
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0, execute: timeout)
+
             process.waitUntilExit()
+
+            // Cancel the timeout since we didn't need it
+            timeout.cancel()
+
+            // Check if process was terminated
+            if process.terminationStatus != 0 {
+                return nil
+            }
 
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             if let output = String(data: data, encoding: .utf8) {
@@ -386,6 +401,7 @@ struct SettingsView: View {
             }
         } catch {
             // Handle error silently
+            return nil
         }
 
         return nil

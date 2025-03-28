@@ -15,6 +15,9 @@ jobs:
     name: Build & Release
     runs-on: macos-15
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3

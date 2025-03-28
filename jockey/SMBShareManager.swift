@@ -8,8 +8,7 @@
 import Foundation
 import Combine
 
-class SMBShareManager: ObservableObject {
-
+final class SMBShareManager: ObservableObject {
     struct SMBShare: Identifiable, Codable {
         var id = UUID()
         var name: String
@@ -20,7 +19,9 @@ class SMBShareManager: ObservableObject {
         var lastChecked: Date?
 
         var formattedConnectionTime: String {
-            guard let connectedSince = connectedSince else { return "" }
+            guard let connectedSince = connectedSince else {
+                return ""
+            }
             let formatter = DateComponentsFormatter()
             formatter.allowedUnits = [.day, .hour, .minute]
             formatter.unitsStyle = .abbreviated
@@ -29,7 +30,9 @@ class SMBShareManager: ObservableObject {
         }
 
         var formattedLastCheckedTime: String {
-            guard let lastChecked = lastChecked else { return "Never" }
+            guard let lastChecked = lastChecked else {
+                return "Never"
+            }
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .abbreviated
             return formatter.localizedString(for: lastChecked, relativeTo: Date())
@@ -130,8 +133,8 @@ class SMBShareManager: ObservableObject {
         logInfo("Checking connection status for \(shares.count) shares...")
 
         // Check each share
-        for i in 0..<shares.count {
-            var share = shares[i]
+        for shareIndex in 0..<shares.count {
+            var share = shares[shareIndex]
             logDebug("Checking share: \(share.name) with URL: \(share.url.absoluteString)")
 
             // Update last checked time
@@ -201,7 +204,7 @@ class SMBShareManager: ObservableObject {
                 logDebug("  Share \(share.name) connection status unchanged: \(share.isConnected)")
             }
 
-            shares[i] = share
+            shares[shareIndex] = share
         }
 
         // Save updated status
@@ -220,7 +223,9 @@ class SMBShareManager: ObservableObject {
     }
 
     func mountShare(_ share: SMBShare) {
-        guard let host = share.url.host else { return }
+        guard share.url.host != nil else {
+            return
+        }
 
         // Prepare mount command
         var mountPoint = share.mountPoint
@@ -230,7 +235,9 @@ class SMBShareManager: ObservableObject {
             mountPoint = URL(fileURLWithPath: "/Volumes/\(volumeName)")
         }
 
-        guard let mountPoint = mountPoint else { return }
+        guard let mountPoint = mountPoint else {
+            return
+        }
         let mountPath = mountPoint.path
 
         // No need to create the mount point directory - mount_smbfs will handle this
@@ -326,7 +333,9 @@ class SMBShareManager: ObservableObject {
     }
 
     func unmountShare(_ share: SMBShare) {
-        guard share.isConnected, let mountPoint = share.mountPoint else { return }
+        guard share.isConnected, let mountPoint = share.mountPoint else {
+            return
+        }
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/sbin/umount")
@@ -346,7 +355,9 @@ class SMBShareManager: ObservableObject {
     }
 
     func updatePollingInterval(_ interval: TimeInterval) {
-        guard interval > 0 else { return }
+        guard interval > 0 else {
+            return
+        }
 
         pollingInterval = interval
         savePollingInterval()
@@ -362,12 +373,10 @@ class SMBShareManager: ObservableObject {
         // Try different possible paths for the mount command
         let mountPaths = ["/sbin/mount", "/bin/mount", "/usr/bin/mount", "/usr/sbin/mount"]
 
-        var mountPath: String? = nil
-        for path in mountPaths {
-            if FileManager.default.fileExists(atPath: path) {
-                mountPath = path
-                break
-            }
+        var mountPath: String?
+        for path in mountPaths where FileManager.default.fileExists(atPath: path) {
+            mountPath = path
+            break
         }
 
         guard let mountPath = mountPath else {
@@ -389,28 +398,26 @@ class SMBShareManager: ObservableObject {
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             if let output = String(data: data, encoding: .utf8) {
                 let lines = output.components(separatedBy: "\n")
-                for line in lines {
-                    if line.contains("smbfs") {
-                        // Parse mount output to extract share info
-                        // Format usually: //user@server/share on /path (smbfs, ...)
-                        let components = line.components(separatedBy: " on ")
-                        if components.count >= 2 {
-                            let shareURLString = components[0]
-                            let mountPathComponents = components[1].components(separatedBy: " (")
-                            if mountPathComponents.count >= 1 {
-                                let mountPath = mountPathComponents[0]
-                                let shareName = (shareURLString as NSString).lastPathComponent
+                for line in lines where line.contains("smbfs") {
+                    // Parse mount output to extract share info
+                    // Format usually: //user@server/share on /path (smbfs, ...)
+                    let components = line.components(separatedBy: " on ")
+                    if components.count >= 2 {
+                        let shareURLString = components[0]
+                        let mountPathComponents = components[1].components(separatedBy: " (")
+                        if mountPathComponents.count >= 1 {
+                            _ = mountPathComponents[0]
+                            let shareName = (shareURLString as NSString).lastPathComponent
 
-                                // Create a proper SMB URL
-                                var urlString = shareURLString
-                                if !urlString.hasPrefix("smb://") {
-                                    // Convert //server/share to smb://server/share
-                                    urlString = "smb:" + urlString
-                                }
+                            // Create a proper SMB URL
+                            var urlString = shareURLString
+                            if !urlString.hasPrefix("smb://") {
+                                // Convert //server/share to smb://server/share
+                                urlString = "smb:" + urlString
+                            }
 
-                                if let url = URL(string: urlString) {
-                                    systemShares[shareName] = url
-                                }
+                            if let url = URL(string: urlString) {
+                                systemShares[shareName] = url
                             }
                         }
                     }

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var shareManager: SMBShareManager
+    @EnvironmentObject private var shareManager: SMBShareManager
     @State private var systemShares: [String: URL] = [:]
     @State private var hoveredShare: String?
     @State private var hoveredManagedShare: UUID?
     @State private var isRefreshButtonHovered = false
-    @State private var hoveredAddButton: String? = nil
+    @State private var hoveredAddButton: String?
     @State private var pollingInterval: Double = 60
     @State private var defaultMountPath: String = "/Volumes"
 
@@ -267,7 +267,7 @@ struct SettingsView: View {
                 HStack {
                     Slider(value: $pollingInterval, in: 5...300, step: 5)
                         .frame(maxWidth: .infinity)
-                        .onChange(of: pollingInterval) { oldValue, newValue in
+                        .onChange(of: pollingInterval) { _, newValue in
                             if newValue < 5 {
                                 pollingInterval = 5
                             } else if newValue > 300 {
@@ -294,7 +294,7 @@ struct SettingsView: View {
                     TextField("Default mount path", text: $defaultMountPath)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(maxWidth: .infinity)
-                        .onChange(of: defaultMountPath) { oldValue, newValue in
+                        .onChange(of: defaultMountPath) { _, newValue in
                             UserDefaults.standard.set(newValue, forKey: "defaultMountPath")
                         }
                 }
@@ -339,11 +339,11 @@ struct SettingsView: View {
     }
 
     private func isShareAlreadyMonitored(url: URL) -> Bool {
-        return shareManager.shares.contains(where: { $0.url.absoluteString == url.absoluteString })
+        shareManager.shares.contains(where: { $0.url.absoluteString == url.absoluteString })
     }
 
     private func addShare(name: String, url: URL, mountPoint: URL? = nil) {
-        shareManager.addShare(name: name, url: url, mountPoint: mountPoint)
+        _ = shareManager.addShare(name: name, url: url, mountPoint: mountPoint)
 
         refreshSystemShares()
     }
@@ -410,11 +410,11 @@ struct SettingsView: View {
 
 extension Bundle {
     var appVersion: String {
-        return infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
     }
 
     var buildNumber: String {
-        return infoDictionary?["CFBundleVersion"] as? String ?? ""
+        infoDictionary?["CFBundleVersion"] as? String ?? ""
     }
 }
 

@@ -14,7 +14,7 @@ enum LogLevel: String {
     case error = "ERROR"
 }
 
-class Logger {
+final class Logger {
     static let shared = Logger()
 
     private let dateFormatter: DateFormatter
@@ -26,7 +26,9 @@ class Logger {
     }
 
     func log(_ message: String, level: LogLevel = .info, file: String = #file, function: String = #function, line: Int = #line) {
-        guard isEnabled else { return }
+        guard isEnabled else {
+            return
+        }
 
         let timestamp = dateFormatter.string(from: Date())
         let fileName = (file as NSString).lastPathComponent

@@ -1,7 +1,6 @@
 included:
   - jockey
 only_rules:
-  - anyobject_protocol
   - array_init
   - block_based_kvo
   - class_delegate_protocol
@@ -53,7 +52,6 @@ only_rules:
   - implicit_getter
   - implicit_return
   - inclusive_language
-  - inert_defer
   - is_disjoint
   - joined_default_parameter
   - last_where
@@ -126,7 +124,6 @@ only_rules:
   - unneeded_parentheses_in_closure_argument
   - unowned_variable_capture
   - untyped_error_in_catch
-  - unused_capture_list
   - unused_closure_parameter
   - unused_control_flow_label
   - unused_enumerated
@@ -154,7 +151,7 @@ identifier_name:
   min_length:
     warning: 2
     error: 2
-  validates_start_with_lowercase: false
+  validates_start_with_lowercase: error
 deployment_target:
   macOS_deployment_target: "11.0"
 custom_rules:

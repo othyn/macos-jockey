@@ -100,6 +100,13 @@ struct SettingsView: View {
                                                 .frame(width: 8, height: 8)
                                             Text("Connected")
                                                 .foregroundColor(.secondary)
+                                            if !share.formattedConnectionTime.isEmpty {
+                                                Image(systemName: "clock")
+                                                    .foregroundColor(.secondary)
+                                                    .font(.caption)
+                                                Text(share.formattedConnectionTime)
+                                                    .foregroundColor(.secondary)
+                                            }
                                         }
                                     } else {
                                         HStack {
@@ -113,16 +120,6 @@ struct SettingsView: View {
 
                                     Spacer()
                                         .frame(width: 10)
-
-                                    // Last checked time
-                                    HStack {
-                                        Image(systemName: "clock")
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                        Text(share.lastChecked?.timeAgoDisplay() ?? "Never")
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                    }
 
                                     Button(action: {
                                         if let index = shareManager.shares.firstIndex(where: { $0.id == share.id }) {

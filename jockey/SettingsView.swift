@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LaunchAtLogin
 
 struct SettingsView: View {
     @EnvironmentObject private var shareManager: SMBShareManager
@@ -249,6 +250,18 @@ struct SettingsView: View {
 
     private var generalSettingsView: some View {
         VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Launch at Login")
+                    .font(.subheadline)
+                    .bold()
+
+                Text("Automatically start Jockey when you log in to your Mac")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                LaunchAtLogin.Toggle()
+            }
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Connection Check Interval")
                     .font(.subheadline)

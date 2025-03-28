@@ -118,18 +118,23 @@ When first using the app, you will need to right click the app and click 'Open',
 
 If you are using macOS Sequoia, there are increased barriers in place to stop you running un-notarized apps. To open the app you will need to do the following;
 
-1. Try to open the app, and when presented with the options to 'Move to trash' or otherwise, close out of that prompt.
+1. Try to open the app, and when presented with the options to 'Move to trash' or otherwise, close out of that prompt:
+
+<div align=center>
+    <img width="50%" src="art/ref/0_readme_macOS_error.png"/>
+</div>
+
 2. Head over to System Settings > Privacy & Security > Security, and scroll all the way at the bottom, you should see the following:
 
 <div align=center>
-    <img width="75%" src="art/ref/readme_macOS_sequoia_settings.png"/>
+    <img width="100%" src="art/ref/1_readme_macOS_settings.png"/>
 </div>
 
 3. Click on the 'Open Anyway' button.
 4. When prompted with the following dialogue, click 'Open Anyway':
 
 <div align=center>
-    <img width="25%" src="art/ref/readme_macOS_sequoia_prompt.png"/>
+    <img width="40%" src="art/ref/2_readme_macOS_prompt.png"/>
 </div>
 
 5. Head back to the Jockey app and try opening it again, it should now work as normal.

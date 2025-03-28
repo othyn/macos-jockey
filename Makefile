@@ -1,6 +1,7 @@
 .PHONY: setup
 setup:
 	git config core.hooksPath .githooks
+	bundle install
 
 .PHONY: lint
 lint:

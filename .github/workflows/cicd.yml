@@ -1,0 +1,44 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Fastlane Build - Beta
+        if: github.ref == 'refs/heads/staging'
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: 'beta'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fastlane Build - Production
+        if: github.ref == 'refs/heads/main'
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: 'production'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

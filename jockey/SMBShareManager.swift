@@ -39,15 +39,35 @@ final class SMBShareManager: ObservableObject {
         }
     }
 
+    struct ReconnectionLog: Identifiable, Codable {
+        var id = UUID()
+        var timestamp: Date
+        var shareName: String
+        var shareURL: String
+        var mountPoint: String
+        var success: Bool
+        var message: String
+
+        var formattedTimestamp: String {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .medium
+            return formatter.string(from: timestamp)
+        }
+    }
+
     @Published var shares: [SMBShare] = []
+    @Published var reconnectionLogs: [ReconnectionLog] = []
     @Published var pollingInterval: TimeInterval = 30 // Default 30 seconds polling interval
     private var checkTimer: Timer?
     private let saveKey = "configuredShares"
     private let pollingIntervalKey = "pollingInterval"
+    private let reconnectionLogsKey = "reconnectionLogs"
 
     init() {
         loadShares()
         loadPollingInterval()
+        loadReconnectionLogs()
         startMonitoring()
     }
 
@@ -67,6 +87,13 @@ final class SMBShareManager: ObservableObject {
         }
     }
 
+    private func loadReconnectionLogs() {
+        if let data = UserDefaults.standard.data(forKey: reconnectionLogsKey),
+           let savedLogs = try? JSONDecoder().decode([ReconnectionLog].self, from: data) {
+            reconnectionLogs = savedLogs
+        }
+    }
+
     private func savePollingInterval() {
         UserDefaults.standard.set(pollingInterval, forKey: pollingIntervalKey)
     }
@@ -74,6 +101,31 @@ final class SMBShareManager: ObservableObject {
     private func saveShares() {
         if let encoded = try? JSONEncoder().encode(shares) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
+        }
+    }
+
+    private func saveReconnectionLogs() {
+        // Only keep the last 100 logs to prevent excessive storage use
+        let logsToSave = reconnectionLogs.count > 100 ? Array(reconnectionLogs.suffix(100)) : reconnectionLogs
+
+        if let encoded = try? JSONEncoder().encode(logsToSave) {
+            UserDefaults.standard.set(encoded, forKey: reconnectionLogsKey)
+        }
+    }
+
+    private func logReconnectionAttempt(shareName: String, shareURL: URL, mountPoint: URL, success: Bool, message: String) {
+        let log = ReconnectionLog(
+            timestamp: Date(),
+            shareName: shareName,
+            shareURL: shareURL.absoluteString,
+            mountPoint: mountPoint.path,
+            success: success,
+            message: message
+        )
+
+        DispatchQueue.main.async {
+            self.reconnectionLogs.append(log)
+            self.saveReconnectionLogs()
         }
     }
 
@@ -247,6 +299,7 @@ final class SMBShareManager: ObservableObject {
 
         // First try with mount_smbfs
         var success = false
+        var mountMessage = ""
 
         // With mount_smbfs
         do {
@@ -259,12 +312,15 @@ final class SMBShareManager: ObservableObject {
 
             if process.terminationStatus == 0 {
                 success = true
+                mountMessage = "Successfully mounted using mount_smbfs"
                 logInfo("Successfully mounted \(share.url.absoluteString) to \(mountPath)")
             } else {
-                logWarning("mount_smbfs failed with status: \(process.terminationStatus)")
+                mountMessage = "mount_smbfs failed with status: \(process.terminationStatus)"
+                logWarning(mountMessage)
             }
         } catch {
-            logError("Error with mount_smbfs: \(error.localizedDescription)")
+            mountMessage = "Error with mount_smbfs: \(error.localizedDescription)"
+            logError(mountMessage)
         }
 
         // If that fails, try with /usr/bin/osascript
@@ -306,19 +362,31 @@ final class SMBShareManager: ObservableObject {
 
                 if process.terminationStatus == 0 && outputString == "true" {
                     success = true
-                    logInfo("Successfully mounted with AppleScript")
+                    mountMessage = "Successfully mounted with AppleScript"
+                    logInfo(mountMessage)
 
                     // After an AppleScript mount, we need to update the connection status immediately
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
                         self?.checkConnectionStatus()
                     }
                 } else {
-                    logWarning("AppleScript mount failed with status: \(process.terminationStatus), output: \(outputString)")
+                    mountMessage = "AppleScript mount failed with status: \(process.terminationStatus), output: \(outputString)"
+                    logWarning(mountMessage)
                 }
             } catch {
-                logError("Error with AppleScript mount: \(error.localizedDescription)")
+                mountMessage = "Error with AppleScript mount: \(error.localizedDescription)"
+                logError(mountMessage)
             }
         }
+
+        // Log the reconnection attempt
+        logReconnectionAttempt(
+            shareName: share.name,
+            shareURL: share.url,
+            mountPoint: mountPoint,
+            success: success,
+            message: mountMessage
+        )
 
         // Update share status after mount attempt
         DispatchQueue.main.async {

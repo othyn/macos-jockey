@@ -30,6 +30,11 @@ struct SettingsView: View {
                     Label("System Shares", systemImage: "desktopcomputer.and.macbook")
                 }
 
+            logsView
+                .tabItem {
+                    Label("Logs", systemImage: "list.bullet.clipboard")
+                }
+
             generalSettingsView
                 .tabItem {
                     Label("Settings", systemImage: "gear")
@@ -337,6 +342,10 @@ struct SettingsView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 20)
+    }
+
+    private var logsView: some View {
+        LogsView()
     }
 
     private func refreshSystemShares() {

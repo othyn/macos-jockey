@@ -139,12 +139,6 @@ If you are using macOS Sequoia, there are increased barriers in place to stop yo
 
 5. Head back to the Jockey app and try opening it again, it should now work as normal.
 
-### When updating the app, does the permission screen get stuck even though you've given it permission?
-
-There can sometimes be an issue with this, I'm not entirely sure why this occurs, as the bundle identifier for the app remains the same and therefor the granted permissions shouldn't either. MacOS gets 'stuck' thinking the app has permissions when it doesn't and so the permission splash screen for the app will never go away. **To fix it,** click the minus button at the bottom of the list of apps under macOS's Accessibility settings where Jockey is listed to manually remove Jockey from the list of permitted apps. Close Jockey and re-open it and grant it access once again, which should fix the issue. [More detail can be found in the thread for Issue #64](https://github.com/othyn/macos-jockey/issues/64#issuecomment-1615933048).
-
-**For more downloads**, checkout the [releases page](https://github.com/othyn/macos-jockey/releases) for app downloads of any version you want to use, even pre-release builds too.
-
 <!-- Contributing -->
 
 ## :memo: Contributing

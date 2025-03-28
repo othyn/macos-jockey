@@ -76,5 +76,6 @@ struct jockeyApp: App {
             SettingsView()
                 .environmentObject(shareManager)
         }
+        .windowLevel(.floating)
     }
 }

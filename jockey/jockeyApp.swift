@@ -23,7 +23,7 @@ struct jockeyApp: App {
         MenuBarExtra("", systemImage: "externaldrive.connected.to.line.below.fill") {
             // When using .menu style, use simple views that translate to native menu items
             // Title (non-interactive)
-            Text("Jockey")
+            Text("Jockey • \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))")
                 .font(.headline)
 
             Divider()

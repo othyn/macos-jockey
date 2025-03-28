@@ -98,13 +98,11 @@ struct SettingsView: View {
                                             Circle()
                                                 .fill(Color.green)
                                                 .frame(width: 8, height: 8)
-                                            Text("Connected")
-                                                .foregroundColor(.secondary)
                                             if !share.formattedConnectionTime.isEmpty {
-                                                Image(systemName: "clock")
+                                                Text("Connected for \(share.formattedConnectionTime)")
                                                     .foregroundColor(.secondary)
-                                                    .font(.caption)
-                                                Text(share.formattedConnectionTime)
+                                            } else {
+                                                Text("Connected")
                                                     .foregroundColor(.secondary)
                                             }
                                         }

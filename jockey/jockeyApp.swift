@@ -51,12 +51,12 @@ struct jockeyApp: App {
                 }
             }
 
-            Divider()
+            // Divider()
 
-            Button("Refresh connections") {
-                shareManager.checkConnectionStatus()
-            }
-            .keyboardShortcut("r")
+            // Button("Refresh connections") {
+            //     shareManager.checkConnectionStatus()
+            // }
+            // .keyboardShortcut("r")
 
             SettingsLink {
                 Text("Configure...")

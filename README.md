@@ -1,7 +1,7 @@
 <div align="center">
     <img src="art/icon/Icon-1024.png" alt="logo" width="250" height="auto" />
     <h1>Jockey for macOS</h1>
-    <p>A simple SMB (Samba) mount keep-alive menu bar app for macOS Sonoma (14) and Sequoia (15) built with ♥️ in Swift & SwiftUI.</p>
+    <p>A simple SMB (Samba) mount keep-alive menu bar app for macOS Sequoia (15) built with ♥️ in Swift & SwiftUI.</p>
     <p></p>
 </div>
 
@@ -108,7 +108,7 @@ Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co
 
 ## :floppy_disk: Download
 
-**Download for macOS Sonoma (14), Sequoia (15) and higher:** [v1.0.0](https://github.com/othyn/macos-jockey/releases/download/v1.0.0/Jockey.zip)
+**Download for macOS Sequoia (15) and higher:** [v1.0.0](https://github.com/othyn/macos-jockey/releases/download/v1.0.0/Jockey.zip)
 
 ### Using the app for the first time
 

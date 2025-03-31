@@ -102,6 +102,7 @@ Designed as an Open Source alternative to [AutoMounter](https://www.pixeleyes.co
 2. Click the menu bar icon to see the status of your shares
 3. Open Settings to add or manage SMB shares
 4. Adjust the polling interval to control how often Jockey checks your connections
+5. Accept the prompt to allow Finder permissions, as is required to allow Jockey to mount shares on your behalf
 
 <!-- Download -->
 
@@ -137,6 +138,7 @@ If you are using macOS Sequoia, there are increased barriers in place to stop yo
 </div>
 
 5. Head back to the Jockey app and try opening it again, it should now work as normal.
+6. When Jockey first attempts to mount a share, it will pop-up and prompt for Finder access, which you will need to grant in order for Jockey to mount shares in your behalf.
 
 <!-- Contributing -->
 

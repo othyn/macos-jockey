@@ -139,6 +139,7 @@ If you are using macOS Sequoia, there are increased barriers in place to stop yo
 
 5. Head back to the Jockey app and try opening it again, it should now work as normal.
 6. When Jockey first attempts to mount a share, it will pop-up and prompt for Finder access, which you will need to grant in order for Jockey to mount shares in your behalf.
+    - Alternatively, you can grant Jockey 'Full Disk Access' within System Settings > Privacy & Security, but I will leave that down to your best judgement.
 
 <!-- Contributing -->
 

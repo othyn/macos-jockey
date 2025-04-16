@@ -26,3 +26,14 @@ beta:
 .PHONY: prod
 prod:
 	bundle exec fastlane mac production
+
+.PHONY: clean
+clean:
+	# Clean Xcode build folder
+	xcodebuild clean -project jockey.xcodeproj -scheme jockey
+	# Remove app preferences and state
+	rm -rf ~/Library/Preferences/com.othyn.jockey.plist
+	rm -rf ~/Library/Saved\ Application\ State/com.othyn.jockey.savedState
+	# Reset defaults
+	defaults delete com.othyn.jockey 2>/dev/null || true
+	@echo "App has been reset to simulate a fresh installation"

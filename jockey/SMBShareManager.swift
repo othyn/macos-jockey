@@ -73,9 +73,19 @@ final class SMBShareManager: ObservableObject {
     }
 
     private func loadShares() {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
-           let savedShares = try? JSONDecoder().decode([SMBShare].self, from: data) {
-            shares = savedShares
+        if let data = UserDefaults.standard.data(forKey: saveKey) {
+            do {
+                let savedShares = try JSONDecoder().decode([SMBShare].self, from: data)
+                shares = savedShares
+                logInfo("Successfully loaded \(savedShares.count) shares from UserDefaults")
+            } catch {
+                logError("Failed to decode shares from UserDefaults: \(error)")
+                // Continue with empty shares array rather than crashing
+                shares = []
+            }
+        } else {
+            logInfo("No saved shares found in UserDefaults")
+            shares = []
         }
         checkConnectionStatus()
     }
@@ -89,9 +99,19 @@ final class SMBShareManager: ObservableObject {
     }
 
     private func loadReconnectionLogs() {
-        if let data = UserDefaults.standard.data(forKey: reconnectionLogsKey),
-           let savedLogs = try? JSONDecoder().decode([ReconnectionLog].self, from: data) {
-            reconnectionLogs = savedLogs
+        if let data = UserDefaults.standard.data(forKey: reconnectionLogsKey) {
+            do {
+                let savedLogs = try JSONDecoder().decode([ReconnectionLog].self, from: data)
+                reconnectionLogs = savedLogs
+                logInfo("Successfully loaded \(savedLogs.count) reconnection logs from UserDefaults")
+            } catch {
+                logError("Failed to decode reconnection logs from UserDefaults: \(error)")
+                // Continue with empty logs array rather than crashing
+                reconnectionLogs = []
+            }
+        } else {
+            logInfo("No saved reconnection logs found in UserDefaults")
+            reconnectionLogs = []
         }
     }
 
@@ -100,8 +120,12 @@ final class SMBShareManager: ObservableObject {
     }
 
     private func saveShares() {
-        if let encoded = try? JSONEncoder().encode(shares) {
+        do {
+            let encoded = try JSONEncoder().encode(shares)
             UserDefaults.standard.set(encoded, forKey: saveKey)
+            logInfo("Successfully saved \(shares.count) shares to UserDefaults")
+        } catch {
+            logError("Failed to encode shares for UserDefaults: \(error)")
         }
     }
 
@@ -109,8 +133,12 @@ final class SMBShareManager: ObservableObject {
         // Only keep the last 100 logs to prevent excessive storage use
         let logsToSave = reconnectionLogs.count > 100 ? Array(reconnectionLogs.suffix(100)) : reconnectionLogs
 
-        if let encoded = try? JSONEncoder().encode(logsToSave) {
+        do {
+            let encoded = try JSONEncoder().encode(logsToSave)
             UserDefaults.standard.set(encoded, forKey: reconnectionLogsKey)
+            logInfo("Successfully saved \(logsToSave.count) reconnection logs to UserDefaults")
+        } catch {
+            logError("Failed to encode reconnection logs for UserDefaults: \(error)")
         }
     }
 

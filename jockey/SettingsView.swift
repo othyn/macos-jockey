@@ -40,7 +40,7 @@ struct SettingsView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 500, height: 500)
         .onAppear {
             refreshSystemShares()
             pollingInterval = shareManager.pollingInterval
@@ -316,7 +316,39 @@ struct SettingsView: View {
                 }
             }
 
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Reset")
+                    .font(.subheadline)
+                    .bold()
+
+                Text("Reset the app to its initial state, removing all shares and settings.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Button("Reset App State") {
+                    // Show confirmation alert
+                    let alert = NSAlert()
+                    alert.messageText = "Reset App State"
+                    alert.informativeText = "This will reset the app to its initial state, removing all shares and settings. THE APP WILL QUIT AFTER RESET. Are you sure you want to continue?"
+                    alert.alertStyle = .warning
+                    alert.addButton(withTitle: "Reset")
+                    alert.addButton(withTitle: "Cancel")
+
+                    let response = alert.runModal()
+                    if response == .alertFirstButtonReturn {
+                        shareManager.resetAppState()
+                        // Update UI state
+                        pollingInterval = shareManager.pollingInterval
+                        defaultMountPath = "/Volumes"
+                        refreshSystemShares()
+                    }
+                }
+                .foregroundColor(.red)
+            }
+
             Spacer()
+
+            Divider()
 
             VStack(alignment: .leading) {
                 Text("About Jockey")

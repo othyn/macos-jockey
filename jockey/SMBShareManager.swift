@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import AppKit
 
 final class SMBShareManager: ObservableObject {
     struct SMBShare: Identifiable, Codable {
@@ -432,6 +433,38 @@ final class SMBShareManager: ObservableObject {
 
         // Restart monitoring with the new interval
         startMonitoring()
+    }
+
+    /// Resets the application state to simulate a fresh installation.
+    /// Use this during development to test the Out-Of-Box Experience (OOBE).
+    func resetAppState() {
+        // Clear all shares
+        shares.removeAll()
+
+        // Clear all reconnection logs
+        reconnectionLogs.removeAll()
+
+        // Reset polling interval to default
+        pollingInterval = 30
+
+        // Clear UserDefaults for all keys
+        UserDefaults.standard.removeObject(forKey: saveKey)
+        UserDefaults.standard.removeObject(forKey: pollingIntervalKey)
+        UserDefaults.standard.removeObject(forKey: reconnectionLogsKey)
+        UserDefaults.standard.removeObject(forKey: "defaultMountPath")
+
+        // Save the cleared state
+        saveShares()
+        savePollingInterval()
+        saveReconnectionLogs()
+
+        // Restart monitoring with default interval
+        startMonitoring()
+
+        logInfo("App state has been reset to simulate a fresh installation")
+
+        // Quit the application
+        NSApplication.shared.terminate(nil)
     }
 
     func getSystemSMBShares() -> [String: URL] {

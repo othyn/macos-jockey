@@ -18,6 +18,8 @@ struct SettingsView: View {
     @State private var pollingInterval: Double = 60
     @State private var defaultMountPath: String = "/Volumes"
 
+    private static var mountPointCache = [String: String]()
+
     var body: some View {
         TabView {
             managedSharesView
@@ -407,6 +409,32 @@ struct SettingsView: View {
             return standardPath
         }
 
+        // Use the class-level cache instead of a local static var
+        if let cachedPath = Self.mountPointCache[shareName] {
+            // Verify cache is still valid
+            if FileManager.default.fileExists(atPath: cachedPath) {
+                return cachedPath
+            }
+        }
+
+        // If we need to check the mount points, do it in a background thread
+        // but return nil immediately from the view rendering path
+        DispatchQueue.global(qos: .background).async { [self] in
+            if let mountPath = processMountCommand(shareName: shareName) {
+                DispatchQueue.main.async {
+                    // Update the cache for future requests
+                    Self.mountPointCache[shareName] = mountPath
+                    // Trigger a refresh of the view
+                    self.refreshSystemShares()
+                }
+            }
+        }
+
+        // Return nil immediately to avoid blocking the UI
+        return nil
+    }
+
+    private func processMountCommand(shareName: String) -> String? {
         // Then check for alternative locations using mount command output
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/sbin/mount")
@@ -437,15 +465,33 @@ struct SettingsView: View {
             if let output = String(data: data, encoding: .utf8) {
                 let lines = output.components(separatedBy: "\n")
                 for line in lines {
-                    // Check if the line contains the share name
-                    if line.contains(shareName) && line.contains("smbfs") {
-                        // Extract the mount point from the line
-                        // Format: //user@server/share on /path (smbfs, ...)
-                        let components = line.components(separatedBy: " on ")
-                        if components.count >= 2 {
-                            let mountPathComponents = components[1].components(separatedBy: " (")
-                            if mountPathComponents.count >= 1 {
-                                return mountPathComponents[0]
+                    // Only process lines that contain smbfs
+                    guard line.contains("smbfs") else { continue }
+
+                    // Process line in a safer way - first check for smbfs
+                    let components = line.components(separatedBy: " on ")
+                    if components.count >= 2 {
+                        let mountPathComponents = components[1].components(separatedBy: " (")
+                        if mountPathComponents.count >= 1 {
+                            let mountPath = mountPathComponents[0]
+
+                            // Check if mount path ends with our share name
+                            if mountPath.hasSuffix("/\(shareName)") {
+                                return mountPath
+                            }
+
+                            // If we can't match the full name, try to search for the mount path
+                            // in volumes directory
+                            let mountPathURL = URL(fileURLWithPath: mountPath)
+                            if mountPathURL.path.hasPrefix(defaultMountPath + "/") {
+                                // Get the share name from the mount path
+                                let mountedShareName = mountPathURL.lastPathComponent
+
+                                // Check if it's our share with spaces or without
+                                if mountedShareName == shareName ||
+                                   mountedShareName.replacingOccurrences(of: "%20", with: " ") == shareName {
+                                    return mountPath
+                                }
                             }
                         }
                     }

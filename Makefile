@@ -5,7 +5,7 @@ setup:
 
 .PHONY: lint
 lint:
-	swiftlint
+	swiftlint --strict
 
 # https://docs.fastlane.tools/getting-started/ios/setup/#use-a-gemfile
 # https://docs.fastlane.tools/plugins/using-plugins/

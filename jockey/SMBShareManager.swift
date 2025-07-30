@@ -40,7 +40,7 @@ final class SMBShareManager: ObservableObject {
         }
 
         var displayName: String {
-            return name.removingPercentEncoding ?? name
+            name.removingPercentEncoding ?? name
         }
     }
 
@@ -61,7 +61,7 @@ final class SMBShareManager: ObservableObject {
         }
 
         var displayShareName: String {
-            return shareName.removingPercentEncoding ?? shareName
+            shareName.removingPercentEncoding ?? shareName
         }
     }
 

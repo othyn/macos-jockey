@@ -86,7 +86,7 @@ struct SettingsView: View {
                             VStack {
                                 HStack {
                                     VStack(alignment: .leading) {
-                                        Text(share.name)
+                                        Text(share.displayName)
                                             .font(.headline)
                                         Text(share.url.absoluteString)
                                             .font(.caption)
@@ -191,7 +191,7 @@ struct SettingsView: View {
                             VStack {
                                 HStack {
                                     VStack(alignment: .leading) {
-                                        Text(shareName)
+                                        Text(shareName.removingPercentEncoding ?? shareName)
                                             .font(.headline)
 
                                         if let url = systemShares[shareName] {

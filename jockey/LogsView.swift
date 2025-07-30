@@ -17,7 +17,7 @@ struct LogsView: View {
                 .width(min: 150, ideal: 180)
 
                 TableColumn("Share") { log in
-                    Text(log.shareName)
+                    Text(log.displayShareName)
                 }
                 .width(min: 100, ideal: 120)
 

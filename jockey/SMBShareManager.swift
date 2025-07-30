@@ -38,6 +38,10 @@ final class SMBShareManager: ObservableObject {
             formatter.unitsStyle = .abbreviated
             return formatter.localizedString(for: lastChecked, relativeTo: Date())
         }
+
+        var displayName: String {
+            return name.removingPercentEncoding ?? name
+        }
     }
 
     struct ReconnectionLog: Identifiable, Codable {
@@ -54,6 +58,10 @@ final class SMBShareManager: ObservableObject {
             formatter.dateStyle = .medium
             formatter.timeStyle = .medium
             return formatter.string(from: timestamp)
+        }
+
+        var displayShareName: String {
+            return shareName.removingPercentEncoding ?? shareName
         }
     }
 
@@ -216,7 +224,7 @@ final class SMBShareManager: ObservableObject {
         // Check each share
         for shareIndex in 0..<shares.count {
             var share = shares[shareIndex]
-            logDebug("Checking share: \(share.name) with URL: \(share.url.absoluteString)")
+            logDebug("Checking share: \(share.displayName) with URL: \(share.url.absoluteString)")
 
             // Update last checked time
             share.lastChecked = Date()
@@ -229,7 +237,7 @@ final class SMBShareManager: ObservableObject {
                 // Update the mount point to use the system path
                 if share.mountPoint?.path != "/Volumes/\(share.name)" {
                     share.mountPoint = URL(fileURLWithPath: "/Volumes/\(share.name)")
-                    logInfo("  Updated mount point to system default: /Volumes/\(share.name)")
+                    logInfo("  Updated mount point to system default: /Volumes/\(share.name) for share \(share.displayName)")
                 }
             }
 
@@ -276,13 +284,13 @@ final class SMBShareManager: ObservableObject {
             if isConnected && !share.isConnected {
                 share.isConnected = true
                 share.connectedSince = Date()
-                logInfo("  Share \(share.name) is now connected!")
+                logInfo("  Share \(share.displayName) is now connected!")
             } else if !isConnected && share.isConnected {
                 share.isConnected = false
                 share.connectedSince = nil
-                logInfo("  Share \(share.name) is now disconnected!")
+                logInfo("  Share \(share.displayName) is now disconnected!")
             } else {
-                logDebug("  Share \(share.name) connection status unchanged: \(share.isConnected)")
+                logDebug("  Share \(share.displayName) connection status unchanged: \(share.isConnected)")
             }
 
             shares[shareIndex] = share

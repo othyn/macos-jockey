@@ -36,14 +36,14 @@ struct jockeyApp: App {
                 ForEach(shareManager.shares) { share in
                     if share.isConnected {
                         HStack {
-                            Text("\(share.name) • Connected for \(share.formattedConnectionTime)")
+                            Text("\(share.displayName) • Connected for \(share.formattedConnectionTime)")
                             Text("\(share.url.absoluteString) • \(share.mountPoint?.path ?? "/Volumes/\(share.name)")")
                         }
                     } else {
                         Button {
                             shareManager.mountShare(share)
                         } label: {
-                            Text("\(share.name) • \(share.url.host ?? "")")
+                            Text("\(share.displayName) • \(share.url.host ?? "")")
                         }
                     }
 

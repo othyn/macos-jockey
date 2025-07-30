@@ -403,10 +403,17 @@ struct SettingsView: View {
     }
 
     private func getMountPoint(for shareName: String) -> String? {
-        // First check the configured location
+        // URL decode the share name in case it has encoded spaces
+        let decodedShareName = shareName.removingPercentEncoding ?? shareName
+
+        // First check the configured location with both encoded and decoded names
         let standardPath = "\(defaultMountPath)/\(shareName)"
+        let decodedPath = "\(defaultMountPath)/\(decodedShareName)"
+
         if FileManager.default.fileExists(atPath: standardPath) {
             return standardPath
+        } else if FileManager.default.fileExists(atPath: decodedPath) {
+            return decodedPath
         }
 
         // Use the class-level cache instead of a local static var
@@ -435,6 +442,9 @@ struct SettingsView: View {
     }
 
     private func processMountCommand(shareName: String) -> String? {
+        // URL decode the share name in case it has encoded spaces
+        let decodedShareName = shareName.removingPercentEncoding ?? shareName
+
         // Then check for alternative locations using mount command output
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/sbin/mount")
@@ -475,8 +485,8 @@ struct SettingsView: View {
                         if mountPathComponents.count >= 1 {
                             let mountPath = mountPathComponents[0]
 
-                            // Check if mount path ends with our share name
-                            if mountPath.hasSuffix("/\(shareName)") {
+                            // Check if mount path ends with our share name (both encoded and decoded)
+                            if mountPath.hasSuffix("/\(shareName)") || mountPath.hasSuffix("/\(decodedShareName)") {
                                 return mountPath
                             }
 
@@ -487,9 +497,11 @@ struct SettingsView: View {
                                 // Get the share name from the mount path
                                 let mountedShareName = mountPathURL.lastPathComponent
 
-                                // Check if it's our share with spaces or without
+                                // Check if it's our share with spaces or without, comparing both encoded and decoded versions
                                 if mountedShareName == shareName ||
-                                   mountedShareName.replacingOccurrences(of: "%20", with: " ") == shareName {
+                                   mountedShareName == decodedShareName ||
+                                   mountedShareName.replacingOccurrences(of: "%20", with: " ") == shareName ||
+                                   mountedShareName.replacingOccurrences(of: "%20", with: " ") == decodedShareName {
                                     return mountPath
                                 }
                             }
